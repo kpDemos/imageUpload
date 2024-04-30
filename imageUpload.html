@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload</title>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.11.1/firebase-storage.js"></script>
+
+    <style>
+        body {
+            text-align: center; 
+            background-color: bisque;
+        }
+        #imagePreview {
+            margin: 20px;
+            width: 300px;
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div id="imageUploader">
+        <h1>Upload Image</h1>
+        <input type="file" id="fileInput" accept="image/*">
+        <button id="uploadImage">Upload Image</button>
+    </div>
+
+    <img id="imagePreview" src="" alt="Image Preview">
+
+    <script type="module">
+        import {initializeApp} from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+        import {getStorage, ref, uploadBytes, getDownloadURL} from "https://www.gstatic.com/firebasejs/10.11.1/firebase-storage.js";
+
+        // Paste in your Firebase config object here
+
+        const app = initializeApp(firebaseConfig);
+        const storage = getStorage(app);
+
+        async function uploadImage() {
+            const fileInput = document.getElementById("fileInput");
+            const file = fileInput.files[0];
+
+            if(file) {
+                const storageRef = ref(storage, `uploaded_images/${file.name}`);
+                await uploadBytes(storageRef, file);
+
+                const imageURL = await getDownloadURL(storageRef);
+                const imagePreview = document.getElementById("imagePreview");
+                imagePreview.src = imageURL;
+            }
+        }
+
+        const uploadButton = document.getElementById("uploadImage");
+        uploadButton.addEventListener('click', uploadImage);
+        
+    </script>
+    
+</body>
+</html>
